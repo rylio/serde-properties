@@ -257,6 +257,9 @@ impl<'de, B: BufRead> de::Deserializer<'de> for &mut Deserializer<B> {
     }
 
     fn deserialize_map<V: Visitor<'de>>(mut self, visitor: V) -> Result<V::Value, Self::Error> {
+        if self.current_value.is_some() || self.current_key.is_some() {
+            return Err(Error::Custom("Nested maps or structs not supported".to_string()));
+        }
         visitor.visit_map(&mut self)
     }
 
