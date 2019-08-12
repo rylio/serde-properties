@@ -134,9 +134,9 @@ impl<'a, W: Write> ser::Serializer for &'a mut Serializer<W> {
         self,
         _name: &'static str,
         _variant_index: u32,
-        _variant: &'static str,
+        variant: &'static str,
     ) -> Result<(), Error> {
-        unimplemented!()
+        self.write_value(variant)
     }
 
     fn serialize_newtype_struct<T>(self, _name: &'static str, _value: &T) -> Result<(), Error>
