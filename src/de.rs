@@ -1,7 +1,7 @@
 use crate::error::{Error, ParseError};
 use serde::de::{self, DeserializeSeed, MapAccess, SeqAccess, Visitor};
 use serde::Deserialize;
-use std::io::{BufRead, BufReader};
+use std::io::{BufRead, BufReader, Read};
 use std::str::FromStr;
 
 pub struct Deserializer<B: BufRead> {
@@ -22,6 +22,11 @@ pub fn from_bytes<'a, T: Deserialize<'a>>(b: &'a [u8]) -> Result<T, Error> {
 
 pub fn from_buf_read<'a, T: Deserialize<'a>, B: BufRead + 'a>(b: B) -> Result<T, Error> {
     let mut deserializer = Deserializer::new(b);
+    T::deserialize(&mut deserializer)
+}
+
+pub fn from_reader<'a, T: Deserialize<'a>, R: Read + 'a>(r: R) -> Result<T, Error> {
+    let mut deserializer = Deserializer::new(BufReader::new(r));
     T::deserialize(&mut deserializer)
 }
 
